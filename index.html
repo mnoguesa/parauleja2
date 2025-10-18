@@ -34,69 +34,87 @@
 
     // === Banc de paraules ===
     const RAW_WORDS = [
-      // A
-      { paraula: "abans", definicio: "En un moment anterior al present.", lletra: "A" },
-      { paraula: "ahir", definicio: "El dia immediatament anterior a avui.", lletra: "A" },
-      { paraula: "àvia", definicio: "Mare del pare o de la mare.", lletra: "A" },
-      { paraula: "avió", definicio: "Aeronau de motor amb ales.", lletra: "A" },
-      // B
-      { paraula: "balcó", definicio: "Sortint d’un edifici obert a l’exterior.", lletra: "B" },
-      { paraula: "bella", definicio: "Que té bellesa; bonica.", lletra: "B" },
-      // C
-      { paraula: "capítol", definicio: "Secció o part d’un llibre.", lletra: "C" },
-      { paraula: "cavall", definicio: "Mamífer equí utilitzat per muntar.", lletra: "C" },
-      { paraula: "cotxe", definicio: "Vehicle de quatre rodes per a persones.", lletra: "C" },
-      { paraula: "cova", definicio: "Cavitat natural a la roca.", lletra: "C" },
-      // D
-      { paraula: "davant", definicio: "A la part frontal; enfront.", lletra: "D" },
-      { paraula: "després", definicio: "En un moment posterior.", lletra: "D" },
-      { paraula: "desprès", definicio: "Que ha quedat solt o separat.", lletra: "D" },
-      // E
-      { paraula: "estrany", definicio: "Que és poc habitual o sorprenent.", lletra: "E" },
-      { paraula: "excepte", definicio: "Amb exclusió de; a part de.", lletra: "E" },
-      // F
-      { paraula: "feliç", definicio: "Que sent felicitat; content.", lletra: "F" },
-      { paraula: "fàstic", definicio: "Sensació de rebuig o nàusea.", lletra: "F" },
-      // G
-      { paraula: "govern", definicio: "Conjunt d’autoritats que dirigeixen un país.", lletra: "G" },
-      { paraula: "globus", definicio: "Bossa flexible plena d’aire o gas.", lletra: "G" },
-      // H
-      { paraula: "hivern", definicio: "Estació freda entre tardor i primavera.", lletra: "H" },
-      { paraula: "haver", definicio: "Verb auxiliar; també ‘tenir/existir’.", lletra: "H" },
-      // I
-      { paraula: "il·lusió", definicio: "Esperança o alegria intensa per alguna cosa.", lletra: "I" },
-      { paraula: "intel·ligència", definicio: "Capacitat de comprendre i resoldre problemes.", lletra: "I" },
-      // J
-      { paraula: "jersei", definicio: "Peça de roba de punt per al tronc.", lletra: "J" },
-      { paraula: "jeroglífic", definicio: "Sistema d’escriptura amb signes figuratius.", lletra: "J" },
-      // L
-      { paraula: "lleig", definicio: "Que no és bell; d’aspecte desagradable.", lletra: "L" },
-      { paraula: "lletja", definicio: "Femení de ‘lleig’.", lletra: "L" },
-      { paraula: "llavors", definicio: "Aleshores; en aquell moment.", lletra: "L" },
-      // M
-      { paraula: "muntar", definicio: "Enfilar-se o assemblar peces.", lletra: "M" },
-      { paraula: "mes", definicio: "Unitat de temps d’uns trenta dies.", lletra: "M" },
-      { paraula: "més", definicio: "Comparatiu o quantificador: en major quantitat.", lletra: "M" },
-      // N
-      { paraula: "néixer", definicio: "Venir al món; començar a existir.", lletra: "N" },
-      { paraula: "només", definicio: "Solament; i res més.", lletra: "N" },
-      // P
-      { paraula: "pavelló", definicio: "Edifici o construcció annexa.", lletra: "P" },
-      { paraula: "prohibir", definicio: "Fer que una cosa no es pugui fer; vetar.", lletra: "P" },
-      // S
-      { paraula: "salut", definicio: "Benestar físic i mental; també salutació.", lletra: "S" },
-      { paraula: "sí", definicio: "Adverbi d’afirmació.", lletra: "S" },
-      { paraula: "si", definicio: "Conjunció condicional; també nota musical.", lletra: "S" },
-      // T
-      { paraula: "tothom", definicio: "Totes les persones.", lletra: "T" },
-      { paraula: "te", definicio: "Infusió feta amb fulles de te.", lletra: "T" },
-      { paraula: "té", definicio: "Forma del verb ‘tenir’ (3a pers. sing.).", lletra: "T" },
-      // V
-      { paraula: "vella", definicio: "Femení de ‘vell’; d’edat avançada.", lletra: "V" },
-      { paraula: "veí", definicio: "Persona que viu a prop o al costat.", lletra: "V" },
-      { paraula: "vegada", definicio: "Cadascuna de les ocasions en què passa un fet.", lletra: "V" },
-    ];
+  // A
+  { paraula: "això", definicio: "Allò que és a prop de qui parla.", lletra: "A" },
+  { paraula: "anglès", definicio: "Idioma propi del Regne Unit i altres països.", lletra: "A" },
+  { paraula: "avisar", definicio: "Fer saber una cosa a algú amb antelació.", lletra: "A" },
+  { paraula: "avorrir", definicio: "Fer perdre l’interès o el gust per alguna cosa.", lletra: "A" },
+  { paraula: "assassí", definicio: "Persona que mata intencionadament una altra.", lletra: "A" },
 
+  // B
+  { paraula: "beguda", definicio: "Líquid que es pot beure.", lletra: "B" },
+  { paraula: "bitllet", definicio: "Document que permet viatjar o entrar en un lloc.", lletra: "B" },
+  { paraula: "bossa", definicio: "Recipient flexible per portar objectes o líquids.", lletra: "B" },
+
+  // C
+  { paraula: "ceba", definicio: "Hortalissa de bulb amb gust fort i olor intensa.", lletra: "C" },
+  { paraula: "col·legi", definicio: "Centre on s’imparteix ensenyament.", lletra: "C" },
+  { paraula: "càmera", definicio: "Aparell per captar imatges fixes o en moviment.", lletra: "C" },
+  { paraula: "covard", definicio: "Que manca de valor o coratge.", lletra: "C" },
+  { paraula: "capaç", definicio: "Que té habilitat o facultat per fer una cosa.", lletra: "C" },
+  { paraula: "créixer", definicio: "Augmentar de mida o desenvolupar-se.", lletra: "C" },
+
+  // D
+  { paraula: "deessa", definicio: "Divinitat femenina.", lletra: "D" },
+  { paraula: "Déu", definicio: "Ésser suprem o divinitat d’una religió.", lletra: "D" },
+  { paraula: "dibuix", definicio: "Representació gràfica feta amb línies o colors.", lletra: "D" },
+
+  // E
+  { paraula: "enyorar", definicio: "Sentir absència o falta d’algú o d’alguna cosa.", lletra: "E" },
+  { paraula: "excursió", definicio: "Sortida o viatge curt amb finalitat recreativa o educativa.", lletra: "E" },
+  { paraula: "estalviar", definicio: "Guardar diners o recursos per usar-los més endavant.", lletra: "E" },
+
+  // F
+  { paraula: "formatge", definicio: "Aliment fet amb llet quallada.", lletra: "F" },
+  { paraula: "francès", definicio: "Idioma propi de França.", lletra: "F" },
+
+  // G
+  { paraula: "girafa", definicio: "Mamífer africà de coll molt llarg.", lletra: "G" },
+
+  // H
+  { paraula: "hospital", definicio: "Centre on s’atén i es tracta persones malaltes.", lletra: "H" },
+  { paraula: "habitació", definicio: "Espai d’una casa o edifici destinat a un ús concret.", lletra: "H" },
+  { paraula: "la història", definicio: "Conjunt d’esdeveniments passats o relat d’aquests.", lletra: "H" },
+
+  // I
+  { paraula: "intenció", definicio: "Propòsit o objectiu d’una acció.", lletra: "I" },
+
+  // J
+  { paraula: "joventut", definicio: "Etapa de la vida compresa entre la infantesa i l’edat adulta.", lletra: "J" },
+
+  // L
+  { paraula: "llenguatge", definicio: "Sistema de signes utilitzat per comunicar-se.", lletra: "L" },
+
+  // M
+  { paraula: "mòbil", definicio: "Telèfon portàtil amb connexió sense fils.", lletra: "M" },
+  { paraula: "muntanya", definicio: "Elevació natural del terreny.", lletra: "M" },
+  { paraula: "mitologia", definicio: "Conjunt de mites propis d’un poble o cultura.", lletra: "M" },
+
+  // N
+  { paraula: "núvol", definicio: "Massa de gotes d’aigua o cristalls de gel a l’atmosfera.", lletra: "N" },
+  { paraula: "novel·la", definicio: "Obra literària en prosa que narra fets imaginaris o reals.", lletra: "N" },
+
+  // P
+  { paraula: "prova", definicio: "Exercici o examen per comprovar coneixements o habilitats.", lletra: "P" },
+  { paraula: "posar", definicio: "Col·locar o situar una cosa en un lloc determinat.", lletra: "P" },
+  { paraula: "passar", definicio: "Moure’s d’un lloc a un altre o succeir.", lletra: "P" },
+
+  // S
+  { paraula: "sofrir", definicio: "Patèixer dolor, pena o dificultat.", lletra: "S" },
+  { paraula: "sol", definicio: "Estrella al voltant de la qual gira la Terra.", lletra: "S" },
+  { paraula: "sospirar", definicio: "Emetre un sospir, sovint per emoció o desig.", lletra: "S" },
+
+  // T
+  { paraula: "també", definicio: "A més; igualment.", lletra: "T" },
+  { paraula: "títol", definicio: "Nom o frase que encapçala una obra o reconeixement.", lletra: "T" },
+  { paraula: "treball", definicio: "Activitat feta per obtenir un resultat o guanyar-se la vida.", lletra: "T" },
+
+  // V
+  { paraula: "vacances", definicio: "Període de descans o lleure fora de les obligacions habituals.", lletra: "V" },
+  { paraula: "vaixell", definicio: "Embarcació gran que navega per mar o riu.", lletra: "V" },
+  { paraula: "veïna", definicio: "Dona que viu al costat o a prop d’una altra.", lletra: "V" },
+  { paraula: "vell", definicio: "Que té molta edat o és antic.", lletra: "V" },
+];
     // Construeix un diccionari de paraules per lletra
     function buildByLetter(entries) {
       const map = {};
@@ -370,3 +388,4 @@
 </body>
 
 </html>
+
