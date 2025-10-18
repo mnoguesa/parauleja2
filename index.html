@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Passaparaula 1a fase</title>
+  <!-- Tailwind CSS per als estils -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React i ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <!-- Babel per a transpilar JSX al navegador -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useEffect, useMemo, useRef, useState } = React;
+
+    // === Configuració del joc ===
+    const GAME_DURATION_MS = 3 * 60 * 1000; // 3 minuts
+    const IGNORE_CASE = true;
+    const REQUIRE_DIACRITICS = true; // accents i dièresi obligatoris
+    const ACCEPT_LL_FOR_LL_GEMINADA = false; // no s'admet "ll" per "l·l"
+    const ACCEPT_DOT_OR_HYPHEN_FOR_LL_GEMINADA = true; // s'admeten "l.l" i "l-l"
+
+    // === Tipus de dades ===
+    // interface Entry {
+    //   paraula: string;
+    //   definicio: string;
+    //   lletra: string;
+    // }
+
+    // === Banc de paraules ===
+    const RAW_WORDS = [
+      // A
+      { paraula: "abans", definicio: "En un moment anterior al present.", lletra: "A" },
+      { paraula: "ahir", definicio: "El dia immediatament anterior a avui.", lletra: "A" },
+      { paraula: "àvia", definicio: "Mare del pare o de la mare.", lletra: "A" },
+      { paraula: "avió", definicio: "Aeronau de motor amb ales.", lletra: "A" },
+      // B
+      { paraula: "balcó", definicio: "Sortint d’un edifici obert a l’exterior.", lletra: "B" },
+      { paraula: "bella", definicio: "Que té bellesa; bonica.", lletra: "B" },
+      // C
+      { paraula: "capítol", definicio: "Secció o part d’un llibre.", lletra: "C" },
+      { paraula: "cavall", definicio: "Mamífer equí utilitzat per muntar.", lletra: "C" },
+      { paraula: "cotxe", definicio: "Vehicle de quatre rodes per a persones.", lletra: "C" },
+      { paraula: "cova", definicio: "Cavitat natural a la roca.", lletra: "C" },
+      // D
+      { paraula: "davant", definicio: "A la part frontal; enfront.", lletra: "D" },
+      { paraula: "després", definicio: "En un moment posterior.", lletra: "D" },
+      { paraula: "desprès", definicio: "Que ha quedat solt o separat.", lletra: "D" },
+      // E
+      { paraula: "estrany", definicio: "Que és poc habitual o sorprenent.", lletra: "E" },
+      { paraula: "excepte", definicio: "Amb exclusió de; a part de.", lletra: "E" },
+      // F
+      { paraula: "feliç", definicio: "Que sent felicitat; content.", lletra: "F" },
+      { paraula: "fàstic", definicio: "Sensació de rebuig o nàusea.", lletra: "F" },
+      // G
+      { paraula: "govern", definicio: "Conjunt d’autoritats que dirigeixen un país.", lletra: "G" },
+      { paraula: "globus", definicio: "Bossa flexible plena d’aire o gas.", lletra: "G" },
+      // H
+      { paraula: "hivern", definicio: "Estació freda entre tardor i primavera.", lletra: "H" },
+      { paraula: "haver", definicio: "Verb auxiliar; també ‘tenir/existir’.", lletra: "H" },
+      // I
+      { paraula: "il·lusió", definicio: "Esperança o alegria intensa per alguna cosa.", lletra: "I" },
+      { paraula: "intel·ligència", definicio: "Capacitat de comprendre i resoldre problemes.", lletra: "I" },
+      // J
+      { paraula: "jersei", definicio: "Peça de roba de punt per al tronc.", lletra: "J" },
+      { paraula: "jeroglífic", definicio: "Sistema d’escriptura amb signes figuratius.", lletra: "J" },
+      // L
+      { paraula: "lleig", definicio: "Que no és bell; d’aspecte desagradable.", lletra: "L" },
+      { paraula: "lletja", definicio: "Femení de ‘lleig’.", lletra: "L" },
+      { paraula: "llavors", definicio: "Aleshores; en aquell moment.", lletra: "L" },
+      // M
+      { paraula: "muntar", definicio: "Enfilar-se o assemblar peces.", lletra: "M" },
+      { paraula: "mes", definicio: "Unitat de temps d’uns trenta dies.", lletra: "M" },
+      { paraula: "més", definicio: "Comparatiu o quantificador: en major quantitat.", lletra: "M" },
+      // N
+      { paraula: "néixer", definicio: "Venir al món; començar a existir.", lletra: "N" },
+      { paraula: "només", definicio: "Solament; i res més.", lletra: "N" },
+      // P
+      { paraula: "pavelló", definicio: "Edifici o construcció annexa.", lletra: "P" },
+      { paraula: "prohibir", definicio: "Fer que una cosa no es pugui fer; vetar.", lletra: "P" },
+      // S
+      { paraula: "salut", definicio: "Benestar físic i mental; també salutació.", lletra: "S" },
+      { paraula: "sí", definicio: "Adverbi d’afirmació.", lletra: "S" },
+      { paraula: "si", definicio: "Conjunció condicional; també nota musical.", lletra: "S" },
+      // T
+      { paraula: "tothom", definicio: "Totes les persones.", lletra: "T" },
+      { paraula: "te", definicio: "Infusió feta amb fulles de te.", lletra: "T" },
+      { paraula: "té", definicio: "Forma del verb ‘tenir’ (3a pers. sing.).", lletra: "T" },
+      // V
+      { paraula: "vella", definicio: "Femení de ‘vell’; d’edat avançada.", lletra: "V" },
+      { paraula: "veí", definicio: "Persona que viu a prop o al costat.", lletra: "V" },
+      { paraula: "vegada", definicio: "Cadascuna de les ocasions en què passa un fet.", lletra: "V" },
+    ];
+
+    // Construeix un diccionari de paraules per lletra
+    function buildByLetter(entries) {
+      const map = {};
+      for (const e of entries) {
+        const L = e.lletra.toUpperCase();
+        if (!map[L]) map[L] = [];
+        map[L].push(e);
+      }
+      return map;
+    }
+
+    const BY_LETTER = buildByLetter(RAW_WORDS);
+    const LETTERS = Object.keys(BY_LETTER).sort();
+
+    // Utilitats de normalització de text
+    function normalizeForCompare(s) {
+      let out = s.trim();
+      if (IGNORE_CASE) out = out.toLocaleLowerCase("ca");
+      if (!REQUIRE_DIACRITICS) {
+        out = out.normalize("NFD").replace(/\p{Diacritic}+/gu, "").normalize("NFC");
+      }
+      return out.normalize("NFC");
+    }
+
+    function acceptableVariants(target) {
+      const forms = [target];
+      if (ACCEPT_DOT_OR_HYPHEN_FOR_LL_GEMINADA && target.includes("l·l")) {
+        forms.push(target.replaceAll("l·l", "l.l"));
+        forms.push(target.replaceAll("l·l", "l-l"));
+      }
+      return Array.from(new Set(forms));
+    }
+
+    function isCorrect(target, input) {
+      const cand = normalizeForCompare(input);
+      return acceptableVariants(target).some((form) => normalizeForCompare(form) === cand);
+    }
+
+    // Selecciona una paraula aleatòria per a cada lletra
+    function chooseRoundSet() {
+      const selected = {};
+      for (const L of LETTERS) {
+        const pool = BY_LETTER[L];
+        selected[L] = pool[Math.floor(Math.random() * pool.length)];
+      }
+      return selected;
+    }
+
+    // Component principal de l'aplicació
+    function App() {
+      const [round, setRound] = useState(() => chooseRoundSet());
+      const [states, setStates] = useState(() => Object.fromEntries(LETTERS.map(L => [L, "pending"])));
+      const [order, setOrder] = useState(LETTERS);
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [input, setInput] = useState("");
+      const [startedAt, setStartedAt] = useState(null);
+      const [now, setNow] = useState(() => Date.now());
+      const [finished, setFinished] = useState(false);
+      const inputRef = useRef(null);
+
+      const currentLetter = order[currentIndex];
+      const currentEntry = round[currentLetter];
+
+      // Temporitzador
+      useEffect(() => {
+        if (finished) return;
+        const i = setInterval(() => setNow(Date.now()), 250);
+        return () => clearInterval(i);
+      }, [finished]);
+
+      const remainingMs = useMemo(() => {
+        if (!startedAt) return GAME_DURATION_MS;
+        const spent = now - startedAt;
+        return Math.max(0, GAME_DURATION_MS - spent);
+      }, [startedAt, now]);
+
+      useEffect(() => {
+        if (!finished && remainingMs === 0) {
+          setFinished(true);
+        }
+      }, [remainingMs, finished]);
+
+      // Focus automàtic a l'input
+      useEffect(() => { inputRef.current?.focus(); }, [currentIndex, finished]);
+
+      // Funció per començar una nova partida
+      function startGame() {
+        setRound(chooseRoundSet());
+        setStates(Object.fromEntries(LETTERS.map(L => [L, "pending"])));
+        setOrder(LETTERS);
+        setCurrentIndex(0);
+        setInput("");
+        setStartedAt(Date.now());
+        setFinished(false);
+      }
+
+      // Avança a la següent lletra pendent
+      function goNext(fromIndex) {
+        if (order.every(L => states[L] !== "pending")) {
+          setFinished(true);
+          return;
+        }
+        for (let k = 1; k <= order.length; k++) {
+          const j = (fromIndex + k) % order.length;
+          if (states[order[j]] === "pending") {
+            setCurrentIndex(j);
+            return;
+          }
+        }
+      }
+
+      function submit() {
+        if (finished) return;
+        if (!startedAt) setStartedAt(Date.now());
+        const target = currentEntry.paraula;
+        const ok = isCorrect(target, input);
+	  setStates(prev => {
+		const updated = { ...prev, [currentLetter]: ok ? "correct" : "wrong" };
+		if (Object.values(updated).every(s => s !== "pending")) {
+		  setFinished(true);
+		} else {
+		  goNext(currentIndex);
+		}
+		return updated;
+	  });
+
+	  setInput("");
+      }
+
+      function pass() {
+        if (finished) return;
+        if (!startedAt) setStartedAt(Date.now());
+        goNext(currentIndex);
+        setInput("");
+      }
+
+      const total = order.length;
+      const correct = Object.values(states).filter(s => s === "correct").length;
+      const wrong = Object.values(states).filter(s => s === "wrong").length;
+      const pending = total - correct - wrong;
+
+      function formatTime(ms) {
+        const s = Math.ceil(ms / 1000);
+        const mm = Math.floor(s / 60).toString().padStart(2, "0");
+        const ss = (s % 60).toString().padStart(2, "0");
+        return `${mm}:${ss}`;
+      }
+      
+      const hint = `Nombre de lletres: ${currentEntry?.paraula.length ?? 0}`;
+      
+      const radius = "180"; // Radi del cercle en píxels per a la versió d'escriptori
+      const mobileRadius = "120"; // Radi per a mòbils
+
+      return (
+        <div className="min-h-screen bg-slate-100 text-slate-900 flex items-center justify-center p-4 font-sans">
+          <div className="w-full max-w-2xl mx-auto">
+            <header className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+              <h1 className="text-xl md:text-2xl font-bold text-slate-800 text-center sm:text-left">Passaparaula (Català)</h1>
+              <div className="flex items-center gap-3">
+                <div className={`px-4 py-2 rounded-full text-lg font-semibold tabular-nums ${remainingMs <= 15000 ? 'bg-red-200 text-red-800' : 'bg-green-200 text-green-800'}`}>{formatTime(remainingMs)}</div>
+                <button onClick={startGame} className="px-4 py-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors shadow-md">Nova partida</button>
+              </div>
+            </header>
+            
+            {/* Rosco (cercle de lletres) */}
+            <div className="relative mx-auto my-6 w-full max-w-xs sm:max-w-md aspect-square flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full border-4 border-slate-200"></div>
+              {order.map((L, idx) => {
+                const angle = (idx / order.length) * 2 * Math.PI - Math.PI / 2;
+                const r = window.innerWidth < 640 ? parseInt(mobileRadius) : parseInt(radius);
+                const cx = r * Math.cos(angle);
+                const cy = r * Math.sin(angle);
+                const state = states[L];
+                const isCurrent = idx === currentIndex && !finished;
+                
+                let bgColor = 'bg-slate-400';
+                if (state === 'correct') bgColor = 'bg-emerald-500';
+                else if (state === 'wrong') bgColor = 'bg-rose-500';
+                else if (isCurrent) bgColor = 'bg-indigo-600';
+                
+                const title = state === "correct" ? "Encertat" : state === "wrong" ? "Error" : isCurrent ? "Actual" : "Pendent";
+
+                return (
+                  <div key={L}
+                       title={`${L} — ${title}`}
+                       className={`absolute w-10 h-10 rounded-full text-white grid place-items-center text-lg font-bold shadow-lg transition-all duration-300 ${bgColor} ${isCurrent ? 'scale-125 z-10' : 'scale-100'}`}
+                       style={{ 
+                         left: `calc(50% + ${cx}px - 20px)`, 
+                         top: `calc(50% + ${cy}px - 20px)` 
+                       }}>
+                    {L}
+                  </div>
+                );
+              })}
+              {/* Resum de puntuació dins del cercle */}
+              <div className="flex flex-col items-center justify-center text-center">
+                 <div className="text-sm text-slate-500">Puntuació</div>
+                 <div className="text-lg font-bold">
+                    <span title="Encerts" className="text-emerald-600">✅ {correct}</span>
+                    <span className="mx-2 text-slate-300">|</span>
+                    <span title="Errors" className="text-rose-600">❌ {wrong}</span>
+                 </div>
+              </div>
+            </div>
+
+            {/* Panell de joc o resultats */}
+            <div className="bg-white rounded-xl shadow-lg p-4 md:p-6 min-h-[250px]">
+              {!finished ? (
+                <div className="grid gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="flex w-10 h-10 items-center justify-center rounded-full bg-indigo-600 text-white text-xl font-bold">{currentLetter}</span>
+                    <p className="text-slate-800 text-lg">{currentEntry.definicio}</p>
+                  </div>
+                  <div className="text-slate-500 text-sm italic">Pista: {hint}</div>
+
+                  <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="flex flex-col sm:flex-row gap-3 mt-2">
+                    <input
+                      ref={inputRef}
+                      autoFocus
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      className="flex-1 rounded-lg border-2 border-slate-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-lg"
+                      placeholder="Escriu la paraula..."
+                    />
+                    <div className="flex gap-2">
+                      <button type="button" onClick={pass} className="w-1/2 sm:w-auto px-5 py-2 rounded-lg bg-slate-200 text-slate-800 font-semibold hover:bg-slate-300 transition-colors">Passa</button>
+                      <button type="submit" className="w-1/2 sm:w-auto px-5 py-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors">Comprova</button>
+                    </div>
+                  </form>
+                </div>
+              ) : (
+                <div>
+                  <h2 className="text-2xl font-bold mb-4 text-center">Resultats de la partida</h2>
+                  <div className="flex justify-center gap-6 text-lg mb-6">
+                    <div>✅ Encerts: <strong className="text-emerald-600">{correct}</strong></div>
+                    <div>❌ Errors: <strong className="text-rose-600">{wrong}</strong></div>
+                    <div>🔤 Total: <strong>{total}</strong></div>
+                  </div>
+                  <div className="max-h-60 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-3 p-2 bg-slate-50 rounded-lg">
+                    {order.map(L => {
+                      const e = round[L];
+                      const st = states[L];
+                      let itemBgColor = 'bg-slate-100 border-slate-200';
+                      if (st === 'correct') itemBgColor = 'bg-emerald-100 border-emerald-300';
+                      else if (st === 'wrong') itemBgColor = 'bg-rose-100 border-rose-300';
+                      
+                      return (
+                        <div key={L} className={`p-3 rounded-lg border ${itemBgColor}`}>
+                          <div className="font-bold text-slate-800">{L} — {e.paraula}</div>
+                          <div className="text-sm text-slate-600">{e.definicio}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <footer className="mt-6 text-center text-xs text-slate-500">
+              <p>Regles: s’ignoren majúscules; <strong>accents i dièresi obligatoris</strong>; per a la <strong>l·l</strong>, s’accepta «l.l» i «l-l». Passar paraula no penalitza.</p>
+            </footer>
+          </div>
+        </div>
+      );
+    }
+
+    const container = document.getElementById('root');
+    const root = ReactDOM.createRoot(container);
+    root.render(<App />);
+  </script>
+</body>
+
+</html>
